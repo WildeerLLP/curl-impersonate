@@ -8,7 +8,7 @@ SHELL := bash
 # MAKEFLAGS += --warn-undefined-variables
 # MAKEFLAGS += --no-builtin-rules
 
-BROTLI_VERSION := 1.0.9
+BROTLI_VERSION := 1.2.1
  # In case this is changed, update build-and-test-make.yml as well
 NSS_VERSION := nss-3.92
 NSS_URL := https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_92_RTM/src/nss-3.92-with-nspr-4.35.tar.gz
@@ -19,7 +19,7 @@ NGHTTP2_URL := https://github.com/nghttp2/nghttp2/releases/download/v1.56.0/nght
 CURL_VERSION := curl-8.1.1
 
 brotli_install_dir := $(abspath brotli-$(BROTLI_VERSION)/out/installed)
-brotli_static_libs := $(brotli_install_dir)/lib/libbrotlicommon-static.a $(brotli_install_dir)/lib/libbrotlidec-static.a
+brotli_static_libs := $(brotli_install_dir)/lib/libbrotlidec.a $(brotli_install_dir)/lib/libbrotlicommon.a
 nss_install_dir := $(abspath $(NSS_VERSION)/dist/Release)
 nss_static_libs := $(nss_install_dir)/lib/libnss_static.a
 boringssl_install_dir := $(abspath boringssl/build)
@@ -195,7 +195,7 @@ $(brotli_static_libs): brotli-$(BROTLI_VERSION).tar.gz
 	    ;;                       \
 	esac
 
-	@cmake@ -DCMAKE_BUILD_TYPE=Release \
+	@cmake@ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
 	        -DCMAKE_INSTALL_PREFIX=./installed \
 	        -DCMAKE_INSTALL_LIBDIR=lib \
 	        -DCMAKE_CXX_COMPILER=$(CXX) \
@@ -288,7 +288,7 @@ $(boringssl_static_libs): boringssl.zip boringssl/.patched
 	# compile in release mode on some systems with gcc 12 (e.g. Fedora).
 	# In addition, guard these options with -Wno-unknown-warning-option to
 	# prevent clang from failing on them.
-	@cmake@ -DCMAKE_BUILD_TYPE=Release \
+	@cmake@ -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
 			-DCMAKE_POSITION_INDEPENDENT_CODE=on \
 			-DCMAKE_C_FLAGS="-Wno-unknown-warning-option -Wno-stringop-overflow -Wno-array-bounds" \
 			-DCMAKE_CXX_COMPILER=$(CXX) \
