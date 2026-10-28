@@ -35,12 +35,12 @@ RUN apt-get install -y mercurial python3-pip
 RUN apt-get install -y libnss3
 
 # Download and compile libbrotli
-ARG BROTLI_VERSION=1.0.9
+ARG BROTLI_VERSION=1.2.1
 RUN curl -L https://github.com/google/brotli/archive/refs/tags/v${BROTLI_VERSION}.tar.gz -o brotli-${BROTLI_VERSION}.tar.gz && \
     tar xf brotli-${BROTLI_VERSION}.tar.gz
 RUN cd brotli-${BROTLI_VERSION} && \
     mkdir build && cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./installed .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=./installed .. && \
     cmake --build . --config Release --target install
 
 # Needed for building libnss
